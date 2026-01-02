@@ -63,6 +63,7 @@ export default function ImposterGame() {
   });
   const [transitioning, setTransitioning] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
+  const [winnerSelected, setWinnerSelected] = useState(false);
 
   const resultRef = useRef(null);
 
@@ -152,12 +153,26 @@ export default function ImposterGame() {
     }
   };
 
-  const showResult = (crewWon = true) => {
+  const showResult = () => {
     vibrate([100, 50, 100]);
     setTimerActive(false);
+    setWinnerSelected(false);
+    setTransitioning(true);
 
-    // Update scores
-    const imposterName = players[gameData.imposterIndex];
+    setTimeout(() => {
+      setPhase('result');
+      setTransitioning(false);
+      playReveal();
+      setTimeout(() => {
+        if (resultRef.current) {
+          createConfetti(resultRef.current);
+        }
+      }, 100);
+    }, 300);
+  };
+
+  const selectWinner = (crewWon) => {
+    vibrate(100);
     const newScores = { ...scores };
 
     players.forEach((p, i) => {
@@ -170,20 +185,10 @@ export default function ImposterGame() {
     });
 
     setScores(newScores);
-    setTransitioning(true);
-
-    setTimeout(() => {
-      setPhase('result');
-      setTransitioning(false);
-      if (crewWon) {
-        playVictory();
-      }
-      setTimeout(() => {
-        if (resultRef.current) {
-          createConfetti(resultRef.current);
-        }
-      }, 100);
-    }, 300);
+    setWinnerSelected(true);
+    if (crewWon) {
+      playVictory();
+    }
   };
 
   const resetGame = () => {
@@ -314,7 +319,7 @@ export default function ImposterGame() {
         {/* Player List with Scores */}
         <div className="relative z-10 mb-3 flex-shrink-0">
           <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/10">
-            <div className="flex justify-between items-center mb-2">
+            <div className="mb-2">
               <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <Users size={14} /> Players ({players.length})
               </h2>
@@ -561,22 +566,13 @@ export default function ImposterGame() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => showResult(true)}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
-              >
-                <Trophy size={18} />
-                Crew Won
-              </button>
-              <button
-                onClick={() => showResult(false)}
-                className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
-              >
-                <Skull size={18} />
-                Imposter Won
-              </button>
-            </div>
+            <button
+              onClick={showResult}
+              className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-base font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+            >
+              <Eye size={20} />
+              Vote & Reveal
+            </button>
 
             <button
               onClick={resetGame}
@@ -644,14 +640,36 @@ export default function ImposterGame() {
           </div>
         </div>
 
-        <div className="w-full mt-auto relative z-10">
-          <button
-            onClick={resetGame}
-            className="w-full bg-white text-slate-900 text-base font-bold py-3 rounded-xl shadow-xl shadow-white/10 hover:bg-slate-100 transition-transform active:scale-95 flex items-center justify-center gap-2"
-          >
-            <RotateCcw size={20} />
-            Play Again
-          </button>
+        <div className="w-full mt-auto relative z-10 space-y-2">
+          {!winnerSelected ? (
+            <>
+              <p className="text-slate-400 text-xs text-center mb-2">Who won this round?</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => selectWinner(true)}
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+                >
+                  <Trophy size={18} />
+                  Crew Won
+                </button>
+                <button
+                  onClick={() => selectWinner(false)}
+                  className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+                >
+                  <Skull size={18} />
+                  Imposter Won
+                </button>
+              </div>
+            </>
+          ) : (
+            <button
+              onClick={resetGame}
+              className="w-full bg-white text-slate-900 text-base font-bold py-3 rounded-xl shadow-xl shadow-white/10 hover:bg-slate-100 transition-transform active:scale-95 flex items-center justify-center gap-2"
+            >
+              <RotateCcw size={20} />
+              Play Again
+            </button>
+          )}
         </div>
       </div>
     );
