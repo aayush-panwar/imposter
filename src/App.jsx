@@ -124,12 +124,12 @@ export default function ImposterGame() {
   // 1. SETUP SCREEN
   if (phase === 'setup') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black text-slate-100 font-sans p-6 flex flex-col max-w-md mx-auto relative overflow-hidden">
+      <div className="h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black text-slate-100 font-sans p-4 flex flex-col max-w-md mx-auto relative overflow-hidden">
         {/* Background decorative blobs */}
         <div className="absolute top-[-20%] right-[-20%] w-64 h-64 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-[-20%] left-[-20%] w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <header className="mb-6 mt-4 relative z-10">
+        <header className="mb-3 mt-2 relative z-10 flex-shrink-0">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20">
               <Skull className="text-white" size={28} />
@@ -142,22 +142,22 @@ export default function ImposterGame() {
         </header>
 
         {/* Player List */}
-        <div className="flex-1 overflow-y-auto mb-6 relative z-10 pr-1">
-          <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-5 shadow-xl border border-white/10">
-            <div className="flex justify-between items-center mb-4">
+        <div className="flex-1 overflow-y-auto mb-3 relative z-10 pr-1 min-h-0">
+          <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/10">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <Users size={14} /> Players ({players.length})
               </h2>
             </div>
 
-            <ul className="space-y-2 mb-4">
+            <ul className="space-y-1.5 mb-3 max-h-32 overflow-y-auto">
               {players.map((player, idx) => (
-                <li key={idx} className="group flex items-center justify-between bg-slate-700/40 p-3 rounded-xl border border-white/5 transition-all hover:bg-slate-700/60 hover:border-white/20">
+                <li key={idx} className="group flex items-center justify-between bg-slate-700/40 p-2 rounded-xl border border-white/5 transition-all hover:bg-slate-700/60 hover:border-white/20">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-sm font-bold border border-indigo-500/30">
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs font-bold border border-indigo-500/30">
                       {idx + 1}
                     </div>
-                    <span className="font-medium text-slate-200">{player}</span>
+                    <span className="font-medium text-slate-200 text-sm">{player}</span>
                   </div>
                   {players.length > 3 && (
                     <button
@@ -177,13 +177,13 @@ export default function ImposterGame() {
                 value={newPlayerName}
                 onChange={(e) => setNewPlayerName(e.target.value)}
                 placeholder="Add new player..."
-                className="flex-1 bg-slate-900/60 border border-slate-600/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600"
+                className="flex-1 bg-slate-900/60 border border-slate-600/50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600"
                 maxLength={12}
               />
               <button
                 type="submit"
                 disabled={!newPlayerName.trim()}
-                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
               >
                 <UserPlus size={20} />
               </button>
@@ -196,9 +196,9 @@ export default function ImposterGame() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory('Random')}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all flex items-center gap-2 ${selectedCategory === 'Random'
-                    ? 'bg-gradient-to-r from-red-600 to-orange-600 border-transparent text-white shadow-lg shadow-orange-900/20 ring-2 ring-orange-500/30 ring-offset-2 ring-offset-slate-900'
-                    : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 ${selectedCategory === 'Random'
+                  ? 'bg-gradient-to-r from-red-600 to-orange-600 border-transparent text-white shadow-lg shadow-orange-900/20 ring-2 ring-orange-500/30 ring-offset-2 ring-offset-slate-900'
+                  : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
                   }`}
               >
                 <Smile size={16} /> Random
@@ -207,9 +207,9 @@ export default function ImposterGame() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all flex items-center gap-2 ${selectedCategory === cat
-                      ? 'bg-indigo-600 border-transparent text-white shadow-lg shadow-indigo-900/20 ring-2 ring-indigo-500/30 ring-offset-2 ring-offset-slate-900'
-                      : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 ${selectedCategory === cat
+                    ? 'bg-indigo-600 border-transparent text-white shadow-lg shadow-indigo-900/20 ring-2 ring-indigo-500/30 ring-offset-2 ring-offset-slate-900'
+                    : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
                     }`}
                 >
                   {CATEGORY_ICONS[cat]} {cat}
@@ -222,7 +222,7 @@ export default function ImposterGame() {
         <button
           onClick={startGame}
           disabled={players.length < 3}
-          className="w-full relative overflow-hidden group bg-white text-slate-900 text-lg font-bold py-4 rounded-2xl shadow-xl shadow-white/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed z-10"
+          className="w-full relative overflow-hidden group bg-white text-slate-900 text-base font-bold py-3 rounded-2xl shadow-xl shadow-white/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed z-10 flex-shrink-0"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
           <span className="relative flex items-center justify-center gap-2">
@@ -242,16 +242,16 @@ export default function ImposterGame() {
     const isImposter = assignIndex === gameData.imposterIndex;
 
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col justify-center max-w-md mx-auto">
-        <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/10 text-center relative overflow-hidden min-h-[500px] flex flex-col">
+      <div className="h-screen bg-slate-950 text-slate-100 p-4 flex flex-col justify-center max-w-md mx-auto overflow-hidden">
+        <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/10 text-center relative overflow-hidden flex-1 flex flex-col max-h-[90vh]">
           {/* Progress Bar */}
           <div className="absolute top-0 left-0 w-full h-1 bg-slate-800">
             <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500 ease-out" style={{ width: `${((assignIndex + 1) / players.length) * 100}%` }}></div>
           </div>
 
-          <div className="mt-4 mb-8">
-            <h2 className="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold mb-2">Confidential File #{assignIndex + 1}</h2>
-            <div className="inline-block px-4 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
+          <div className="mt-2 mb-4">
+            <h2 className="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold mb-1">Confidential File #{assignIndex + 1}</h2>
+            <div className="inline-block px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
               Target: {currentPlayer}
             </div>
           </div>
@@ -261,10 +261,10 @@ export default function ImposterGame() {
               <div className="animate-in fade-in zoom-in duration-300 w-full">
                 {isImposter ? (
                   <div className="flex flex-col items-center">
-                    <div className="w-24 h-24 rounded-full bg-red-500/20 flex items-center justify-center mb-6 animate-pulse">
-                      <Skull size={48} className="text-red-500" />
+                    <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mb-4 animate-pulse">
+                      <Skull size={40} className="text-red-500" />
                     </div>
-                    <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-400 to-red-600 mb-4 tracking-tight">IMPOSTER</h3>
+                    <h3 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-400 to-red-600 mb-3 tracking-tight">IMPOSTER</h3>
                     <div className="bg-red-950/30 border border-red-500/20 p-4 rounded-xl w-full">
                       <p className="text-red-200 text-sm font-medium">Your Mission</p>
                       <p className="text-slate-400 text-xs mt-1">Blend in. The category is <strong className="text-slate-200">{gameData.category}</strong>.</p>
@@ -272,24 +272,24 @@ export default function ImposterGame() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="w-24 h-24 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6">
-                      <Trophy size={48} className="text-emerald-500" />
+                    <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
+                      <Trophy size={32} className="text-emerald-500" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-400 mb-2 uppercase tracking-widest">Secret Word</h3>
-                    <div className="bg-gradient-to-br from-emerald-900/40 to-slate-900 border border-emerald-500/30 px-8 py-6 rounded-2xl w-full shadow-lg shadow-emerald-900/20">
-                      <span className="text-4xl font-black text-emerald-400 tracking-wide break-words">{gameData.word}</span>
+                    <h3 className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-widest">Secret Word</h3>
+                    <div className="bg-gradient-to-br from-emerald-900/40 to-slate-900 border border-emerald-500/30 px-6 py-4 rounded-xl w-full shadow-lg shadow-emerald-900/20">
+                      <span className="text-3xl font-black text-emerald-400 tracking-wide break-words">{gameData.word}</span>
                     </div>
-                    <p className="text-slate-500 text-xs mt-6">Don't reveal this to the Imposter.</p>
+                    <p className="text-slate-500 text-xs mt-4">Don't reveal this to the Imposter.</p>
                   </div>
                 )}
               </div>
             ) : (
               <button
                 onClick={() => setIsRevealed(true)}
-                className="group w-full h-64 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-indigo-500 hover:bg-slate-800/30 transition-all cursor-pointer"
+                className="group w-full h-48 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-indigo-500 hover:bg-slate-800/30 transition-all cursor-pointer"
               >
-                <div className="w-20 h-20 rounded-full bg-slate-800 group-hover:bg-indigo-600 group-hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-xl">
-                  <Eye size={32} className="text-slate-400 group-hover:text-white" />
+                <div className="w-16 h-16 rounded-full bg-slate-800 group-hover:bg-indigo-600 group-hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-xl">
+                  <Eye size={28} className="text-slate-400 group-hover:text-white" />
                 </div>
                 <div className="text-center">
                   <span className="block text-slate-300 font-bold text-lg group-hover:text-white transition-colors">Tap to Reveal Identity</span>
@@ -299,11 +299,11 @@ export default function ImposterGame() {
             )}
           </div>
 
-          <div className="mt-8 h-14">
+          <div className="mt-4 h-12 flex-shrink-0">
             {isRevealed && (
               <button
                 onClick={nextAssignment}
-                className="w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors shadow-lg shadow-white/5 active:scale-95"
+                className="w-full bg-white text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors shadow-lg shadow-white/5 active:scale-95"
               >
                 {assignIndex < players.length - 1 ? 'Hide & Pass Device' : 'Start Mission Clock'}
               </button>
@@ -317,18 +317,18 @@ export default function ImposterGame() {
   // 3. PLAYING SCREEN
   if (phase === 'playing') {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col max-w-md mx-auto relative overflow-hidden">
+      <div className="h-screen bg-slate-950 text-slate-100 p-4 flex flex-col max-w-md mx-auto relative overflow-hidden">
         {/* Background pulses */}
         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none transition-opacity duration-1000 ${timerActive ? 'opacity-100 animate-pulse' : 'opacity-20'}`}></div>
 
         <div className="relative z-10 flex-1 flex flex-col">
           {/* Timer */}
-          <div className="flex flex-col items-center justify-center mt-8 mb-12">
+          <div className="flex flex-col items-center justify-center mt-4 mb-6">
             <div
               onClick={() => setTimerActive(!timerActive)}
               className={`relative group cursor-pointer transition-all duration-300 ${timerActive ? 'scale-105' : 'scale-100 opacity-80'}`}
             >
-              <div className={`text-7xl font-black tracking-tighter tabular-nums ${timer < 30 && timerActive ? 'text-red-500' : 'text-white'}`}>
+              <div className={`text-6xl font-black tracking-tighter tabular-nums ${timer < 30 && timerActive ? 'text-red-500' : 'text-white'}`}>
                 {formatTime(timer)}
               </div>
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -338,13 +338,13 @@ export default function ImposterGame() {
           </div>
 
           {/* First Player Indicator */}
-          <div className="bg-slate-900/80 backdrop-blur border border-indigo-500/30 p-6 rounded-2xl mb-8 text-center shadow-xl shadow-indigo-900/10">
+          <div className="bg-slate-900/80 backdrop-blur border border-indigo-500/30 p-4 rounded-2xl mb-4 text-center shadow-xl shadow-indigo-900/10">
             <div className="inline-flex items-center gap-2 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-3">
               <UserPlus size={12} className="text-indigo-400" />
               <span className="text-indigo-300 text-[10px] uppercase tracking-bold font-bold">First Turn</span>
             </div>
-            <p className="text-2xl font-bold text-white mb-1">{players[gameData.firstPlayerIndex]}</p>
-            <p className="text-slate-400 text-sm">Starts the discussion</p>
+            <p className="text-xl font-bold text-white mb-1">{players[gameData.firstPlayerIndex]}</p>
+            <p className="text-slate-400 text-xs">Starts the discussion</p>
             <div className="mt-4 pt-4 border-t border-white/5">
               <p className="text-slate-500 text-xs uppercase tracking-widest">Category</p>
               <p className="text-indigo-300 font-medium">{gameData.category}</p>
@@ -353,9 +353,9 @@ export default function ImposterGame() {
 
           {/* Action Buttons */}
           <div className="mt-auto gap-4 flex flex-col">
-            <div className="grid grid-cols-2 gap-3 mb-2">
+            <div className="grid grid-cols-2 gap-2 mb-2 max-h-24 overflow-y-auto">
               {players.map((p, i) => (
-                <div key={i} className="bg-slate-800/50 border border-white/5 rounded-lg p-2 text-center text-sm text-slate-400">
+                <div key={i} className="bg-slate-800/50 border border-white/5 rounded-lg p-1.5 text-center text-xs text-slate-400">
                   {p}
                 </div>
               ))}
@@ -363,7 +363,7 @@ export default function ImposterGame() {
 
             <button
               onClick={() => setPhase('result')}
-              className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+              className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-base font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
             >
               <Eye size={20} />
               Vote & Reveal
@@ -371,7 +371,7 @@ export default function ImposterGame() {
 
             <button
               onClick={resetGame}
-              className="w-full bg-transparent hover:bg-slate-800 text-slate-500 hover:text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors"
+              className="w-full bg-transparent hover:bg-slate-800 text-slate-500 hover:text-white font-medium py-2 rounded-xl flex items-center justify-center gap-2 transition-colors text-sm"
             >
               <X size={18} />
               Abort Mission
@@ -385,7 +385,7 @@ export default function ImposterGame() {
   // 4. RESULT SCREEN
   if (phase === 'result') {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col items-center justify-center max-w-md mx-auto text-center relative">
+      <div className="h-screen bg-slate-950 text-slate-100 p-4 flex flex-col items-center justify-center max-w-md mx-auto text-center relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-red-600/10 to-transparent pointer-events-none"></div>
         </div>
@@ -393,28 +393,28 @@ export default function ImposterGame() {
         <div className="relative z-10 w-full animate-in zoom-in duration-500">
           <p className="text-slate-400 text-xs uppercase tracking-[0.3em] font-bold mb-6">Mission Report</p>
 
-          <div className="relative mb-12">
+          <div className="relative mb-6">
             <div className="absolute inset-0 bg-red-500 blur-2xl opacity-20 animate-pulse rounded-full"></div>
-            <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-red-500/30 p-8 rounded-3xl shadow-2xl relative">
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-red-500/30 p-6 rounded-2xl shadow-2xl relative">
               <p className="text-slate-400 text-sm mb-2">The Imposter was</p>
-              <p className="text-4xl font-black text-white tracking-tight">{players[gameData.imposterIndex]}</p>
+              <p className="text-3xl font-black text-white tracking-tight">{players[gameData.imposterIndex]}</p>
             </div>
           </div>
 
-          <div className="bg-slate-900/50 backdrop-blur p-6 rounded-2xl w-full border border-white/5 mb-8">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Trophy size={16} className="text-emerald-500" />
+          <div className="bg-slate-900/50 backdrop-blur p-4 rounded-2xl w-full border border-white/5 mb-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Trophy size={14} className="text-emerald-500" />
               <p className="text-emerald-500 text-xs uppercase tracking-widest font-bold">Real Identity</p>
             </div>
-            <p className="text-3xl font-bold text-white mb-1">{gameData.word}</p>
-            <p className="text-slate-500 text-sm">{gameData.category}</p>
+            <p className="text-2xl font-bold text-white mb-1">{gameData.word}</p>
+            <p className="text-slate-500 text-xs">{gameData.category}</p>
           </div>
         </div>
 
         <div className="w-full mt-auto relative z-10">
           <button
             onClick={resetGame}
-            className="w-full bg-white text-slate-900 text-lg font-bold py-4 rounded-xl shadow-xl shadow-white/10 hover:bg-slate-100 transition-transform active:scale-95 flex items-center justify-center gap-2"
+            className="w-full bg-white text-slate-900 text-base font-bold py-3 rounded-xl shadow-xl shadow-white/10 hover:bg-slate-100 transition-transform active:scale-95 flex items-center justify-center gap-2"
           >
             <RotateCcw size={20} />
             Play Again
