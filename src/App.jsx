@@ -62,6 +62,7 @@ export default function ImposterGame() {
     return saved ? JSON.parse(saved) : {};
   });
   const [transitioning, setTransitioning] = useState(false);
+  const [showScoreboard, setShowScoreboard] = useState(false);
 
   const resultRef = useRef(null);
 
@@ -242,32 +243,84 @@ export default function ImposterGame() {
         <div className="absolute bottom-[-20%] left-[-20%] w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <header className="mb-3 mt-2 relative z-10 flex-shrink-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20 animate-pulse">
-              <Skull className="text-white" size={28} />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20 animate-pulse">
+                <Skull className="text-white" size={28} />
+              </div>
+              <div>
+                <h1 className="text-3xl font-black text-white tracking-tight leading-none">IMPOSTER</h1>
+                <p className="text-slate-400 text-xs font-medium uppercase tracking-widest">Find the spy</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-white tracking-tight leading-none">IMPOSTER</h1>
-              <p className="text-slate-400 text-xs font-medium uppercase tracking-widest">Find the spy</p>
-            </div>
+            {Object.keys(scores).length > 0 && (
+              <button
+                onClick={() => setShowScoreboard(true)}
+                className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-300 px-3 py-2 rounded-xl flex items-center gap-2 transition-colors"
+              >
+                <Trophy size={16} />
+                <span className="text-xs font-bold">Scores</span>
+              </button>
+            )}
           </div>
         </header>
 
+        {/* Scoreboard Modal */}
+        {showScoreboard && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowScoreboard(false)}>
+            <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Trophy className="text-amber-400" size={20} /> Leaderboard
+                </h2>
+                <button onClick={() => setShowScoreboard(false)} className="text-slate-500 hover:text-white p-1">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {Object.entries(scores)
+                  .sort((a, b) => (b[1].crew + b[1].imposter) - (a[1].crew + a[1].imposter))
+                  .map(([name, score], idx) => (
+                    <div key={name} className={`flex items-center justify-between p-3 rounded-xl ${idx === 0 ? 'bg-amber-500/20 border border-amber-500/30' : 'bg-slate-800/50'}`}>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-sm font-bold ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-orange-400' : 'text-slate-500'}`}>
+                          #{idx + 1}
+                        </span>
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getAvatarColor(name)} flex items-center justify-center text-xs font-bold text-white`}>
+                          {name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-medium text-white">{name}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="text-emerald-400" title="Crew wins">👥 {score.crew}</span>
+                        <span className="text-red-400" title="Imposter wins">🎭 {score.imposter}</span>
+                        <span className="text-amber-400 font-bold">{score.crew + score.imposter}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <button
+                onClick={() => { clearScores(); setShowScoreboard(false); }}
+                className="mt-4 w-full text-sm text-slate-500 hover:text-red-400 py-2 transition-colors"
+              >
+                Reset All Scores
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Player List with Scores */}
-        <div className="flex-1 overflow-hidden mb-3 relative z-10 pr-1 min-h-0">
-          <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/10 h-full flex flex-col">
-            <div className="flex justify-between items-center mb-2 flex-shrink-0">
+        <div className="relative z-10 mb-3 flex-shrink-0">
+          <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/10">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <Users size={14} /> Players ({players.length})
               </h2>
-              {Object.keys(scores).length > 0 && (
-                <button onClick={clearScores} className="text-xs text-slate-500 hover:text-red-400 transition-colors">
-                  Reset Scores
-                </button>
-              )}
             </div>
 
-            <ul className="space-y-1.5 mb-3 max-h-32 overflow-y-auto">
+            <ul className="space-y-1.5 mb-3 max-h-40 overflow-y-auto">
               {players.map((player, idx) => (
                 <li key={idx} className="group flex items-center justify-between bg-slate-700/40 p-2 rounded-xl border border-white/5 transition-all hover:bg-slate-700/60 hover:border-white/20 hover:scale-[1.02]">
                   <div className="flex items-center gap-3">
@@ -312,33 +365,33 @@ export default function ImposterGame() {
               </button>
             </form>
           </div>
+        </div>
 
-          {/* Settings */}
-          <div className="mt-3">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block px-1">Game Mode</label>
-            <div className="flex flex-wrap gap-1.5">
+        {/* Category Settings */}
+        <div className="flex-1 overflow-y-auto relative z-10 mb-3 min-h-0">
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block px-1">Game Mode</label>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setSelectedCategory('Random')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 hover:scale-105 ${selectedCategory === 'Random'
+                ? 'bg-gradient-to-r from-red-600 to-orange-600 border-transparent text-white shadow-lg shadow-orange-900/20 ring-2 ring-orange-500/30 ring-offset-2 ring-offset-slate-900'
+                : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                }`}
+            >
+              <Smile size={14} /> Random
+            </button>
+            {Object.keys(CATEGORIES).map(cat => (
               <button
-                onClick={() => setSelectedCategory('Random')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 hover:scale-105 ${selectedCategory === 'Random'
-                  ? 'bg-gradient-to-r from-red-600 to-orange-600 border-transparent text-white shadow-lg shadow-orange-900/20 ring-2 ring-orange-500/30 ring-offset-2 ring-offset-slate-900'
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 hover:scale-105 ${selectedCategory === cat
+                  ? 'bg-indigo-600 border-transparent text-white shadow-lg shadow-indigo-900/20 ring-2 ring-indigo-500/30 ring-offset-2 ring-offset-slate-900'
                   : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
                   }`}
               >
-                <Smile size={14} /> Random
+                {CATEGORY_ICONS[cat]} {cat}
               </button>
-              {Object.keys(CATEGORIES).map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 hover:scale-105 ${selectedCategory === cat
-                    ? 'bg-indigo-600 border-transparent text-white shadow-lg shadow-indigo-900/20 ring-2 ring-indigo-500/30 ring-offset-2 ring-offset-slate-900'
-                    : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-                    }`}
-                >
-                  {CATEGORY_ICONS[cat]} {cat}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
@@ -508,13 +561,22 @@ export default function ImposterGame() {
               ))}
             </div>
 
-            <button
-              onClick={() => showResult(true)}
-              className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-base font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
-            >
-              <Eye size={20} />
-              Vote & Reveal
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => showResult(true)}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+              >
+                <Trophy size={18} />
+                Crew Won
+              </button>
+              <button
+                onClick={() => showResult(false)}
+                className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-sm font-bold py-3 rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+              >
+                <Skull size={18} />
+                Imposter Won
+              </button>
+            </div>
 
             <button
               onClick={resetGame}
