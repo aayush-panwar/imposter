@@ -5,7 +5,8 @@ import {
   Film, Flag, Globe, Briefcase, Smile, Ghost
 } from 'lucide-react';
 
-// --- Game Data ---
+/* ---------------- GAME DATA ---------------- */
+
 const CATEGORIES = {
   'Indian Food': ['Biryani', 'Dosa', 'Samosa', 'Pani Puri', 'Vada Pav', 'Butter Chicken', 'Gulab Jamun', 'Idli', 'Chole Bhature', 'Pav Bhaji'],
   'Bollywood': ['Shah Rukh Khan', 'Amitabh Bachchan', 'Deepika Padukone', 'Salman Khan', 'Alia Bhatt', 'Aamir Khan', 'Priyanka Chopra', 'Ranveer Singh', 'Kareena Kapoor', 'Hrithik Roshan'],
@@ -26,7 +27,9 @@ const CATEGORY_ICONS = {
   'Jobs': <Briefcase size={16} />
 };
 
-export default function App() {
+/* ---------------- APP ---------------- */
+
+export default function ImposterGame() {
   const [phase, setPhase] = useState('setup');
   const [players, setPlayers] = useState(['Player 1', 'Player 2', 'Player 3']);
   const [newPlayerName, setNewPlayerName] = useState('');
@@ -37,25 +40,39 @@ export default function App() {
   const [timerActive, setTimerActive] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Random');
 
+  /* ---------------- HELPERS ---------------- */
+
   const addPlayer = (e) => {
     e.preventDefault();
-    if (newPlayerName.trim()) {
-      setPlayers([...players, newPlayerName.trim()]);
-      setNewPlayerName('');
-    }
+    if (!newPlayerName.trim()) return;
+    setPlayers([...players, newPlayerName.trim()]);
+    setNewPlayerName('');
+  };
+
+  const removePlayer = (i) => {
+    if (players.length <= 3) return;
+    setPlayers(players.filter((_, idx) => idx !== i));
   };
 
   const startGame = () => {
     const cats = Object.keys(CATEGORIES);
-    const category = selectedCategory === 'Random'
-      ? cats[Math.floor(Math.random() * cats.length)]
-      : selectedCategory;
+    const category =
+      selectedCategory === 'Random'
+        ? cats[Math.floor(Math.random() * cats.length)]
+        : selectedCategory;
 
-    const word = CATEGORIES[category][Math.floor(Math.random() * CATEGORIES[category].length)];
-    const imposterIndex = Math.floor(Math.random() * players.length);
-    const firstPlayerIndex = Math.floor(Math.random() * players.length);
+    const word =
+      CATEGORIES[category][
+        Math.floor(Math.random() * CATEGORIES[category].length)
+      ];
 
-    setGameData({ category, word, imposterIndex, firstPlayerIndex });
+    setGameData({
+      category,
+      word,
+      imposterIndex: Math.floor(Math.random() * players.length),
+      firstPlayerIndex: Math.floor(Math.random() * players.length)
+    });
+
     setAssignIndex(0);
     setIsRevealed(false);
     setPhase('assign');
@@ -64,7 +81,7 @@ export default function App() {
   const nextAssignment = () => {
     setIsRevealed(false);
     if (assignIndex < players.length - 1) {
-      setAssignIndex(assignIndex + 1);
+      setAssignIndex((i) => i + 1);
     } else {
       setPhase('playing');
       setTimer(players.length * 60);
@@ -78,63 +95,63 @@ export default function App() {
     setTimerActive(false);
   };
 
+  /* ---------------- TIMER ---------------- */
+
   useEffect(() => {
     if (!timerActive || timer <= 0) return;
-    const id = setInterval(() => setTimer(t => t - 1), 1000);
+    const id = setInterval(() => setTimer((t) => t - 1), 1000);
     return () => clearInterval(id);
   }, [timerActive, timer]);
 
-  const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const formatTime = (s) =>
+    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
   /* ---------------- SETUP ---------------- */
+
   if (phase === 'setup') {
     return (
-      <div className="min-h-screen bg-black text-white p-6 max-w-md mx-auto">
-        <h1 className="text-3xl font-black text-center mb-6">IMPOSTER</h1>
+      <div className="min-h-screen bg-slate-950 text-white p-6 max-w-md mx-auto flex flex-col">
+        <h1 className="text-3xl font-black mb-6 text-center">IMPOSTER</h1>
 
         <ul className="space-y-2 mb-4">
           {players.map((p, i) => (
-            <li key={i} className="bg-slate-800 p-3 rounded flex justify-between">
+            <li key={i} className="flex justify-between bg-slate-800 p-3 rounded">
               {p}
+              {players.length > 3 && (
+                <button onClick={() => removePlayer(i)}>
+                  <X size={16} />
+                </button>
+              )}
             </li>
           ))}
         </ul>
 
-        <form onSubmit={addPlayer} className="flex gap-2 mb-4">
+        <form onSubmit={addPlayer} className="flex gap-2 mb-6">
           <input
             value={newPlayerName}
-            onChange={e => setNewPlayerName(e.target.value)}
-            className="flex-1 p-2 rounded bg-slate-700"
+            onChange={(e) => setNewPlayerName(e.target.value)}
+            className="flex-1 bg-slate-800 p-2 rounded"
             placeholder="Add player"
           />
-          <button className="bg-indigo-600 px-4 rounded">
+          <button className="bg-indigo-600 p-3 rounded">
             <UserPlus size={16} />
           </button>
         </form>
 
-        <div className="flex flex-wrap gap-2 mb-4">
-          <button onClick={() => setSelectedCategory('Random')} className="bg-slate-700 px-3 py-1 rounded flex items-center gap-1">
-            <Smile size={14} /> Random
-          </button>
-          {Object.keys(CATEGORIES).map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className="bg-slate-800 px-3 py-1 rounded flex items-center gap-1">
-              {CATEGORY_ICONS[cat]} {cat}
-            </button>
-          ))}
-        </div>
-
         <button
           onClick={startGame}
-          className="w-full bg-white text-black font-bold py-3 rounded"
+          disabled={players.length < 3}
+          className="mt-auto bg-white text-black font-bold py-4 rounded-xl"
         >
-          Start Game
+          Start Mission
         </button>
       </div>
     );
   }
 
   /* ---------------- ASSIGN ---------------- */
-  if (phase === 'assign') {
+
+  if (phase === 'assign' && gameData) {
     const isImposter = assignIndex === gameData.imposterIndex;
 
     return (
@@ -148,9 +165,15 @@ export default function App() {
             {isImposter ? (
               <h1 className="text-red-500 text-4xl font-black">IMPOSTER</h1>
             ) : (
-              <h1 className="text-green-400 text-4xl font-black">{gameData.word}</h1>
+              <h1 className="text-green-400 text-4xl font-black">
+                {gameData.word}
+              </h1>
             )}
-            <button onClick={nextAssignment} className="mt-6 bg-white text-black px-6 py-2 rounded">
+
+            <button
+              onClick={nextAssignment}
+              className="mt-6 bg-white text-black px-6 py-3 rounded"
+            >
               Next
             </button>
           </div>
@@ -160,31 +183,36 @@ export default function App() {
   }
 
   /* ---------------- PLAYING ---------------- */
+
   if (phase === 'playing') {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
         <div className="text-6xl font-black mb-6">{formatTime(timer)}</div>
-        <button onClick={() => setPhase('result')} className="bg-red-600 px-6 py-3 rounded">
-          Vote & Reveal
+        <button
+          onClick={() => setPhase('result')}
+          className="bg-red-600 px-6 py-3 rounded"
+        >
+          Reveal Imposter
         </button>
       </div>
     );
   }
 
   /* ---------------- RESULT ---------------- */
-  if (phase === 'result') {
+
+  if (phase === 'result' && gameData) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-black mb-4">
+        <h1 className="text-3xl mb-4">
           Imposter: {players[gameData.imposterIndex]}
         </h1>
-        <p className="mb-6 text-xl">
-          Word: {gameData.word}
-        </p>
-        <button onClick={resetGame} className="bg-white text-black px-6 py-3 rounded flex items-center gap-2">
-          <RotateCcw size={16} /> Play Again
+        <p className="mb-6">Word: {gameData.word}</p>
+        <button onClick={resetGame} className="bg-white text-black px-6 py-3 rounded">
+          Play Again
         </button>
       </div>
     );
   }
+
+  return null;
 }
